@@ -164,8 +164,6 @@ ggplot(Meantot, aes(x=reorder(Meantot$newprov, Meantot$order), y=Meantot$mean_to
         geom_errorbar(data=FDAMeans, aes(ymin= mean.antal - se.FDA, ymax=mean.antal + se.FDA),
                    width = 0.13, alpha = 1, position=position_dodge(0.75)) +
         theme_classic() + 
-        #scale_fill_manual(values=c("#73ba2e", "#034c77")) +
-        #scale_color_manual(values=c("#000000", "#000000")) +
         scale_y_continuous(limits = c(0,150), expand = c(0,0)) +
         labs(y="Medelantal per tvärsnitt", x="", title = "Levande celler per tvärsnitt från varje lokal") +
         theme(legend.position = c(0.9,0.9), 
