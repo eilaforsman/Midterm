@@ -12,9 +12,9 @@ list.files ()
 #Basic####
 getwd()
 
-setwd("~/Documents/Documents/R/Master/Master")
+setwd("~/Documents/Documents/R/Statcourse/Midterm")
 
-dataFDA <- read.csv("dataFDA.csv", sep = ';')
+dataFDA <- read.csv("dataFDA.csv", sep=";")
 head(dataFDA)
 str(dataFDA)
 dataFDA$Struktur <- as.factor(dataFDA$Struktur)
