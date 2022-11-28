@@ -154,6 +154,9 @@ summary(m6) #Includes site as random factor and correct overdispersion, correct 
 
 boxplot(resid(m6) ~ dataFDA_sub$Behandling)
 
+coef = summary(m6)$coef
+exp(coef[1,1])
+exp(coef[1,1] + coef[2,1])
 
 #Fancy plotting######
 
@@ -177,8 +180,8 @@ ggplot(Meantot, aes(x=reorder(Meantot$newprov, Meantot$order), y=Meantot$mean_to
                    width = 0.13, alpha = 1, position=position_dodge(0.75)) +
         theme_classic() + 
         scale_y_continuous(limits = c(0,150), expand = c(0,0)) +
-        labs(y="Medelantal per tvärsnitt", x="", 
-             title = "Levande celler per tvärsnitt från varje lokal") +
+        labs(y="Mean number per cross section", x="", 
+             title = "Number of live cells per cross section from each site") +
         theme(legend.position = c(0.9,0.9), 
               legend.title = element_blank(),
               plot.title = element_text (hjust = 0.5),
@@ -187,8 +190,8 @@ ggplot(Meantot, aes(x=reorder(Meantot$newprov, Meantot$order), y=Meantot$mean_to
                                          hjust = 1, color = "grey1")) +
         theme(axis.ticks.length=unit(.25, "cm"))
 
-ggsave("Celler_FDA_plot", plot = last_plot(), device = "png",
-       scale = 1, width = 20, height = 12,
+ggsave("Celler_FDA_plot.png", plot = last_plot(), device = "png",
+       scale = 1, width = 12, height = 8,
        dpi = 600)
 
 
