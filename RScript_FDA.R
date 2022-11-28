@@ -74,7 +74,7 @@ text(x = 1:length(levels(mean_LokalFDA$Lokal)),
 
 #Data exploring####
 
-hist(dataFDA_sub$Antal)
+hist(dataFDA_sub$Antal, xlab="Number of cells", las=1)
 
 dataFDA_sub$Behandling = factor(dataFDA_sub$Behandling, levels=c("Kontroll", "Heatweed"))
 m = lm(Antal~Behandling, data=dataFDA_sub)
@@ -117,7 +117,8 @@ library(lmerTest)
 #Assumes equal variances between groups, (levene.test()), sig is problem 
 #Om anova inte funkar -> testa Anova
 
-m2 = glm.nb(dataFDA_sub$Antal ~ dataFDA_sub$Behandling)
+
+m2 = glm.nb(Antal ~ Behandling, data=dataFDA_sub)
 summary(m2) #Fitted a generalized linear model with negative binomial distribution
 #to account for overdispersion. Big difference but doesn't take site into account
 
@@ -137,10 +138,21 @@ m4 = lme(Antal ~ Behandling, random = ~ 1|Lokal, weights = varIdent(form= ~1|Beh
 
 anova(m4) #Assumes normal distribution
 
-
 m5 = glmmTMB(Antal ~ Behandling + (1|Lokal), dispformula = ~ Behandling, family="poisson", data=dataFDA_sub)
 
-Anova(m5) #Correct data distribution and with non equal variance
+
+Anova(m5) #Correct data distribution and with non equal variance, site as a random factor
+
+boxplot (sqrt(dataFDA_sub$Antal) ~ dataFDA_sub$Behandling)
+
+resid(m5)
+boxplot(resid(m5) ~ dataFDA_sub$Behandling)
+
+
+m6 = glmer.nb(Antal ~ Behandling + (1|Lokal), family="poisson", data=dataFDA_sub)
+summary(m6) #Includes site as random factor and correct overdispersion, correct data distribution
+
+boxplot(resid(m6) ~ dataFDA_sub$Behandling)
 
 
 #Fancy plotting######
