@@ -158,6 +158,7 @@ coef = summary(m6)$coef
 exp(coef[1,1])
 exp(coef[1,1] + coef[2,1])
 
+
 #Fancy plotting######
 
 #install.packages("ggplot2")
@@ -194,11 +195,45 @@ ggsave("Celler_FDA_plot.png", plot = last_plot(), device = "png",
        scale = 1, width = 12, height = 8,
        dpi = 600)
 
+#Mean number of cells per sample####
 
 
+SampleMeans <- ddply(dataFDA_sub,"Prov", summarize, N=length(Antal),
+                     mean.antal=mean(na.omit(Antal)),
+                     sd.FDA=sd(na.omit(Antal)),
+                     se.FDA=sd.FDA/sqrt(N))
+str(SampleMeans)
+SampleMeans$Prov = as.character(SampleMeans$Prov)
 
 
+SampleMeans$newprov <- substr(SampleMeans$Prov, 1, nchar(SampleMeans$Prov) - 2)
+
+Sample = aggregate(cbind(SampleMeans$mean.antal, SampleMeans$sd.FDA, 
+                         SampleMeans$se.FDA), 
+                   by=list(newprov=SampleMeans$newprov), FUN =sum)
 
 
+Meantot$mean_sample = Sample$V1
+Meantot$sd = Sample$V2
+Meantot$se = Sample$V3
 
+ggplot(Meantot, aes(x=reorder(newprov, order), y=mean_sample)) +
+  geom_bar(width = 0.75, stat = "identity", position ="dodge", alpha = 0.8) +
+  geom_errorbar(data=Meantot, aes(ymin= mean_sample - se, 
+                                  ymax=mean_sample + se),
+                width = 0.13, alpha = 1, position=position_dodge(0.75)) +
+  theme_classic() + 
+  scale_y_continuous(limits = c(0,500), expand = c(0,0)) +
+  labs(y="Medelantal per prov", x="", 
+       title = "Levande celler per prov från varje lokal") +
+  theme(legend.position = c(0.9,0.9), 
+        legend.title = element_blank(),
+        plot.title = element_text (hjust = 0.5),
+        text = element_text(size=28, family= "Times"),
+        axis.text.x = element_text(size = 20, angle = 60,
+                                   hjust = 1, color = "grey1")) +
+  theme(axis.ticks.length=unit(.25, "cm"))
 
+ggsave("Celler_prov_plot.png", plot = last_plot(), device = "png",
+       scale = 1, width = 10, height = 8,
+       dpi = 600)
