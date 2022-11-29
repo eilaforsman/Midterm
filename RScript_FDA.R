@@ -237,3 +237,4 @@ ggplot(Meantot, aes(x=reorder(newprov, order), y=mean_sample)) +
 ggsave("Celler_prov_plot.png", plot = last_plot(), device = "png",
        scale = 1, width = 10, height = 8,
        dpi = 600)
+
