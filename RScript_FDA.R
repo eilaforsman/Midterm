@@ -149,8 +149,8 @@ resid(m5)
 boxplot(resid(m5) ~ dataFDA_sub$Behandling)
 
 
-m6 = glmer.nb(Antal ~ Behandling + (1|Lokal), family="poisson", data=dataFDA_sub)
-summary(m6) #Includes site as random factor and correct overdispersion, correct data distribution
+m6 = glmer.nb(Antal ~ Behandling + (1|Lokal) + (1|Prov:Lokal), family="poisson", data=dataFDA_sub)
+summary(m6) #Includes site and sample as random factor and correct overdispersion, correct data distribution
 
 boxplot(resid(m6) ~ dataFDA_sub$Behandling)
 
