@@ -139,7 +139,7 @@ m4 = lme(Antal ~ Behandling, random = ~ 1|Lokal, weights = varIdent(form= ~1|Beh
 anova(m4) #Assumes normal distribution
 
 m5 = glmmTMB(Antal ~ Behandling + (1|Lokal), dispformula = ~ Behandling, family="poisson", data=dataFDA_sub)
-
+summary(m5)
 
 Anova(m5) #Correct data distribution and with non equal variance, site as a random factor
 
@@ -224,8 +224,8 @@ ggplot(Meantot, aes(x=reorder(newprov, order), y=mean_sample)) +
                 width = 0.13, alpha = 1, position=position_dodge(0.75)) +
   theme_classic() + 
   scale_y_continuous(limits = c(0,500), expand = c(0,0)) +
-  labs(y="Medelantal per prov", x="", 
-       title = "Levande celler per prov från varje lokal") +
+  labs(y="Mean number of cells", x="", 
+       title = "Number of live cells per sample from each site") +
   theme(legend.position = c(0.9,0.9), 
         legend.title = element_blank(),
         plot.title = element_text (hjust = 0.5),
