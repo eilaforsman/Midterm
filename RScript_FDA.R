@@ -255,25 +255,27 @@ ggsave("Celler_prov_plot.png", plot = last_plot(), device = "png",
 #Variance####
 
 vardat = split(dataFDA_sub, f=dataFDA_sub$Behandling)
-vardatC = vardat$Kontroll
-vardatHW = vardat$Heatweed
+datC = vardat$Kontroll
+datHW = vardat$Heatweed
 
-hist(vardatC$Antal)
-vardatC$logantal = log(vardatC$Antal)
-hist(vardatC$logantal)
+hist(datC$Antal)
 
-m = lm(Antal ~ 1, data=vardatC)
+m = glm.nb(Antal ~ 1, data=datC)
 summary(m)
 
-hist(vardatHW$Antal)
-vardatHW$logantal = log(vardatHW$Antal)
-hist(vardatHW$logantal)
+hist(datHW$Antal)
 
-m2 = lm(Antal ~ 1, data=vardatHW)
+
+m2 = glm.nb(Antal ~ 1, data=datHW)
 summary(m2)
 
 coefs = summary(m)$coef
+coefs2 = summary(m2)$coef
 
-var(vardatC$Antal)
-var(vardatHW$Antal)
+var(datC$Antal)
+var(datHW$Antal)
+var(datC$Antal)/(var(datC$Antal)+var(datHW$Antal))
+var(datHW$Antal)/(var(datC$Antal)+var(datHW$Antal))
+
+
 
