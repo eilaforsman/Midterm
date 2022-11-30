@@ -148,15 +148,29 @@ boxplot (sqrt(dataFDA_sub$Antal) ~ dataFDA_sub$Behandling)
 resid(m5)
 boxplot(resid(m5) ~ dataFDA_sub$Behandling)
 
-
-m6 = glmer.nb(Antal ~ Behandling + (1|Lokal) + (1|Prov:Lokal), family="poisson", data=dataFDA_sub)
-summary(m6) #Includes site and sample as random factor and correct overdispersion, correct data distribution
+m6 = glmer.nb(Antal ~ Behandling + (1|Lokal), family="poisson", data=dataFDA_sub)
+m7 = glmmTMB(Antal ~ Behandling + (1|Lokal/Prov), family="nbinom1", data=dataFDA_sub)
+summary(m6) 
+summary(m7)#Includes site and sample as random factor and correct overdispersion, 
+             #correct data distribution
 
 boxplot(resid(m6) ~ dataFDA_sub$Behandling)
+boxplot(resid(m7) ~ dataFDA_sub$Behandling)
 
-coef = summary(m6)$coef
+plot(Antal ~ Behandling, data=dataFDA_sub)
+
+#Results####
+
+coef = summary(m7)
+coef = coef[["coefficients"]][["cond"]]
 exp(coef[1,1])
 exp(coef[1,1] + coef[2,1])
+
+stats = ddply(dataFDA_sub, "Behandling", summarize, 
+               median_treat = median(Antal),
+               mean_treat = mean(Antal),
+              sd_treat = sd(Antal),
+              se_treat = sd_treat/sqrt(length(Antal)))
 
 
 #Fancy plotting######
@@ -237,4 +251,29 @@ ggplot(Meantot, aes(x=reorder(newprov, order), y=mean_sample)) +
 ggsave("Celler_prov_plot.png", plot = last_plot(), device = "png",
        scale = 1, width = 10, height = 8,
        dpi = 600)
-#############################################################################
+
+#Variance####
+
+vardat = split(dataFDA_sub, f=dataFDA_sub$Behandling)
+vardatC = vardat$Kontroll
+vardatHW = vardat$Heatweed
+
+hist(vardatC$Antal)
+vardatC$logantal = log(vardatC$Antal)
+hist(vardatC$logantal)
+
+m = lm(Antal ~ 1, data=vardatC)
+summary(m)
+
+hist(vardatHW$Antal)
+vardatHW$logantal = log(vardatHW$Antal)
+hist(vardatHW$logantal)
+
+m2 = lm(Antal ~ 1, data=vardatHW)
+summary(m2)
+
+coefs = summary(m)$coef
+
+var(vardatC$Antal)
+var(vardatHW$Antal)
+
