@@ -264,21 +264,37 @@ datHW = vardat$Heatweed
 
 hist(datC$Antal) #Visualize Control data
 
-m = glm.nb(Antal ~ 1, data=datC) #Fit model to control data
-summary(m)
+m8 = glm.nb(Antal ~ 1, data=datC) #Fit model to control data
+summary(m8)
 
 hist(datHW$Antal)#Visualize HW data
 
-m2 = glm.nb(Antal ~ 1, data=datHW) #Fit model to HW data
-summary(m2)
-
-coefs = summary(m)$coef
-coefs2 = summary(m2)$coef
-
-var(datC$Antal)
-var(datHW$Antal)
-var(datC$Antal)/(var(datC$Antal)+var(datHW$Antal))
-var(datHW$Antal)/(var(datC$Antal)+var(datHW$Antal))
+m9 = glm.nb(Antal ~ 1, data=datHW) #Fit model to HW data
+summary(m9)
 
 
+install.packages("performance")
+library(performance)
+r2(m7)
 
+#Variance explained by sites for control samples
+m10 = glmmTMB(Antal ~ 1 + (1|Lokal), family="nbinom1", data=datC)
+summary(m10)
+r2(m10) #Conditional takes fixed and random effects into account. Marginal only fixed
+
+
+#Variance explained by sites for HW samples
+m11 = glmmTMB(Antal ~ 1 + (1|Lokal), family="nbinom1", data=datHW)
+summary(m11)
+r2(m11)
+#High variance within data not the same as R^2 which shows how much of that variance that the model explains
+
+#Variance explained by samples within sites for control samples
+m12 = glmmTMB(Antal ~ 1 + (1|Lokal/Prov), family="nbinom1", data=datC)
+summary(m12)
+r2(m12)
+
+#Variance explained by samples within sites for HW samples
+m13 = glmmTMB(Antal ~ 1 + (1|Lokal/Prov), family="nbinom1", data=datHW)
+summary(m13)
+r2(m13)
